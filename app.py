@@ -71,7 +71,7 @@ plant_info = {
             "Genus": "Anredera",
             "Spesies": "Anredera cordifolia"
         },
-        "image_path": "gambar/pohon/binahong.jpg"
+        "image_path": "gambar/pohon/Binahong.jpg"
     },
     "Cincau Hijau": {
         "scientific_name": "Cyclea barbata",
