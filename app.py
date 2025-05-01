@@ -259,7 +259,7 @@ if selected == "Panduan":
 
     col1, col2 = st.columns(2)
     with col1:
-        st.image("gambar/sirih.jpg", caption="**Contoh gambar yang benar**")
+        st.image("gambar/Sirih.jpg", caption="**Contoh gambar yang benar**")
     with col2:
         st.image("gambar/salah.jpg", caption="**Contoh gambar yang salah**")
     
