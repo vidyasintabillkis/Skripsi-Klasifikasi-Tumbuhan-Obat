@@ -29,8 +29,8 @@ def load_model_from_github(url, model_name):
         st.error(f"Gagal memuat model {model_name}: {str(e)}")
         return None
 
-EFFICIENTNET_MODEL_URL = "https://github.com/vidyasintabillkis/SKRIPSI/releases/download/v1.0.0/efficientnetv2b0_9.h5"
-XCEPTION_MODEL_URL = "https://github.com/vidyasintabillkis/SKRIPSI/releases/download/v1.0.0/xception_9.h5"
+EFFICIENTNET_MODEL_URL = "https://github.com/vidyasintabillkis/SKRIPSI/releases/download/v1.0.0/efficientnet_9.Augmentasi.h5"
+XCEPTION_MODEL_URL = "https://github.com/vidyasintabillkis/SKRIPSI/releases/download/v1.0.0/xception_9.Augmentasi.h5"
 
 model_efficientnet = load_model_from_github(EFFICIENTNET_MODEL_URL, "EfficientNetV2")
 model_xception = load_model_from_github(XCEPTION_MODEL_URL, "Xception")
