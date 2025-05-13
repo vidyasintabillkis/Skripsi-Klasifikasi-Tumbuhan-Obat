@@ -265,13 +265,17 @@ if selected == "Panduan":
     
 elif selected == "Klasifikasi":
     st.title("Klasifikasi Tumbuhan Obat")
-    uploaded_file = st.file_uploader("Silahkan unggah gambar daun sesuai panduan", type=["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"])
+    uploaded_file = st.file_uploader("Silahkan unggah gambar daun sesuai panduan", type=["jpg", "jpeg", "png"])
 
     if uploaded_file is not None:
         try:
-            image = Image.open(uploaded_file).convert('RGB')
+            image = Image.open(uploaded_file).convert("RGB")
+            file_ext = uploaded_file.name.split(".")[-1]
+            if file_ext != file_ext.lower():
+                st.warning("⚠️ Ekstensi file menggunakan huruf besar (contoh: .JPG). "
+                        "Sebaiknya gunakan huruf kecil (.jpg) agar lebih aman.")
+                
             st.image(image, width=300)
-
             if st.button("Prediksi", type="primary"):
                 img_array = preprocess_image(image)
                 label1, conf1, time1 = predict_with_threshold(model_efficientnet, img_array)
