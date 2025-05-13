@@ -265,15 +265,33 @@ if selected == "Panduan":
     
 elif selected == "Klasifikasi":
     st.title("Klasifikasi Tumbuhan Obat")
-    uploaded_file = st.file_uploader("Silahkan unggah gambar daun sesuai panduan", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader(
+        "Silahkan unggah gambar daun sesuai panduan", 
+        type=["jpg", "jpeg", "png"],
+        accept_multiple_files=False
+    )
 
     if uploaded_file is not None:
         try:
-            image = Image.open(uploaded_file).convert("RGB")
-            file_ext = uploaded_file.name.split(".")[-1]
-            if file_ext != file_ext.lower():
-                st.warning("⚠️ Ekstensi file menggunakan huruf besar (contoh: .JPG). "
-                        "Sebaiknya gunakan huruf kecil (.jpg) agar lebih aman.")
+            file_name = uploaded_file.name
+            valid_extensions = ['.jpg', '.jpeg', '.png']
+            file_ext = '.' + file_name.split('.')[-1].lower()
+            
+            if file_ext not in valid_extensions:
+                st.error(f"❌ Format file {file_ext} tidak didukung. Gunakan JPG/JPEG/PNG")
+                st.stop()  # Hentikan eksekusi
+            
+            # Solusi 3: Buka gambar dengan buffer memory
+            image_bytes = uploaded_file.getvalue()
+            
+            # Double validation dengan PIL
+            try:
+                image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+                image.verify()  # Verifikasi integritas gambar
+                image = Image.open(io.BytesIO(image_bytes))  # Buka kembali setelah verify
+            except Exception as img_error:
+                st.error(f"❌ File gambar corrupt atau tidak valid. Error: {str(img_error)}")
+                st.stop()
                 
             st.image(image, width=300)
             if st.button("Prediksi", type="primary"):
@@ -300,6 +318,7 @@ elif selected == "Klasifikasi":
                         show_plant_info(label2, conf2)
                 
         except UnidentifiedImageError:
-            st.error("❌ File yang diunggah bukan gambar yang valid atau gambar corrupt. Silakan unggah ulang.")
+            st.error("❌ File bukan gambar yang valid. Pastikan file adalah gambar JPG/JPEG/PNG asli.")
         except Exception as e:
-            st.error(f"⚠️ Terjadi kesalahan saat memproses gambar: {e}")
+            st.error(f"⚠️ Error sistem: {str(e)}")
+            st.error("Tips: Coba unggah ulang file atau gunakan file lain")
