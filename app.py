@@ -265,7 +265,7 @@ if selected == "Panduan":
     
 elif selected == "Klasifikasi":
     st.title("Klasifikasi Tumbuhan Obat")
-    uploaded_file = st.file_uploader("Silahkan unggah gambar daun sesuai panduan", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("Silahkan unggah gambar daun sesuai panduan", type=["jpg", "jpeg", "png", "JPG"])
 
     if uploaded_file is not None:
         try:
