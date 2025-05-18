@@ -286,14 +286,14 @@ elif selected == "Klasifikasi":
 
                     with tab1:
                         if label1 == "Kelas Tidak Dikenal":
-                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini (EfficientNet).")
+                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini")
                         else:
                             show_plant_info(label1, conf1)
                             # st.caption(f"Hasil klasifikasi menggunakan model EfficientNet")
 
                     with tab2:
                         if label2 == "Kelas Tidak Dikenal":
-                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini (Xception).")
+                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini")
                         else:
                             show_plant_info(label2, conf2)
                             # st.caption(f"Hasil klasifikasi menggunakan model Xception")
