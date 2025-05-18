@@ -29,8 +29,8 @@ def load_model_from_github(url, model_name):
         st.error(f"Gagal memuat model {model_name}: {str(e)}")
         return None
 
-EFFICIENTNET_MODEL_URL = "https://github.com/vidyasintabillkis/SKRIPSI/releases/download/v1.0.0/efficientnet_9.Augmentasi.h5"
-XCEPTION_MODEL_URL = "https://github.com/vidyasintabillkis/SKRIPSI/releases/download/v1.0.0/xception_9.Augmentasi.h5"
+EFFICIENTNET_MODEL_URL = "https://github.com/vidyasintabillkis/SKRIPSI/releases/download/v1.0.0/efficientnet_9.h5"
+XCEPTION_MODEL_URL = "https://github.com/vidyasintabillkis/SKRIPSI/releases/download/v1.0.0/xception_9.h5"
 
 model_efficientnet = load_model_from_github(EFFICIENTNET_MODEL_URL, "EfficientNetV2")
 model_xception = load_model_from_github(XCEPTION_MODEL_URL, "Xception")
@@ -265,38 +265,40 @@ if selected == "Panduan":
     
 elif selected == "Klasifikasi":
     st.title("Klasifikasi Tumbuhan Obat")
-
-    uploaded_file = st.file_uploader("Unggah gambar daun", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("Silakan unggah gambar daun sesuai panduan (jpg, jpeg, png)", type=None)
 
     if uploaded_file is not None:
-        try:
-            image = Image.open(uploaded_file).convert('RGB')
-            st.image(image, width=300)
+        file_ext = uploaded_file.name.split('.')[-1].lower()
+        allowed_exts = ["jpg", "jpeg", "png"]
 
-            if st.button("Prediksi", type="primary"):
-                img_array = preprocess_image(image)
-                label1, conf1, time1 = predict_with_threshold(model_efficientnet, img_array)
-                label2, conf2, time2 = predict_with_threshold(model_xception, img_array)
-                tab1, tab2 = st.tabs(["🧠 Hasil Klasifikasi 1", "🧠 Hasil Klasifikasi 2"])
+        if file_ext not in allowed_exts:
+            st.error("❌ Format file tidak didukung. Silakan unggah file dengan format JPG, JPEG, atau PNG.")
+        else:
+            try:
+                image = Image.open(uploaded_file).convert('RGB')
+                st.image(image, width=300)
 
-                with tab1:
-                    if label1 == "Kelas Tidak Dikenal":
-                        st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini.")
-                    else:
-                        # st.success(f"Tumbuhan ini kemungkinan besar adalah **{label1}**")
-                        # st.info(f"Keyakinan sistem {conf1:.2f}%")
-                        # # st.caption(f"Waktu eksekusi: {time1:.2f} detik")
-                        show_plant_info(label1, conf1)
-                with tab2:
-                    if label2 == "Kelas Tidak Dikenal":
-                        st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini.")
-                    else:
-                        # st.success(f"Tumbuhan ini kemungkinan besar adalah **{label2}**")
-                        # st.info(f"Keyakinan sistem {conf2:.2f}%")
-                        # # st.caption(f"Waktu eksekusi: {time2:.2f} detik")
-                        show_plant_info(label2, conf2)
-                
-        except UnidentifiedImageError:
-            st.error("❌ File yang diunggah bukan gambar yang valid atau gambar corrupt. Silakan unggah ulang.")
-        except Exception as e:
-            st.error(f"⚠️ Terjadi kesalahan saat memproses gambar: {e}")
+                if st.button("Prediksi", type="primary"):
+                    img_array = preprocess_image(image)
+                    label1, conf1, time1 = predict_with_threshold(model_efficientnet, img_array)
+                    label2, conf2, time2 = predict_with_threshold(model_xception, img_array)
+                    tab1, tab2 = st.tabs(["Klasifikasi Model EfficientNetV2B0", "Klasifikasi Model Xception"])
+
+                    with tab1:
+                        if label1 == "Kelas Tidak Dikenal":
+                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini (EfficientNet).")
+                        else:
+                            show_plant_info(label1, conf1)
+                            # st.caption(f"Hasil klasifikasi menggunakan model EfficientNet")
+
+                    with tab2:
+                        if label2 == "Kelas Tidak Dikenal":
+                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini (Xception).")
+                        else:
+                            show_plant_info(label2, conf2)
+                            # st.caption(f"Hasil klasifikasi menggunakan model Xception")
+
+            except UnidentifiedImageError:
+                st.error("❌ File yang diunggah bukan gambar yang valid atau gambar corrupt. Silakan unggah ulang.")
+            except Exception as e:
+                st.error(f"⚠️ Terjadi kesalahan saat memproses gambar: {e}")
