@@ -180,7 +180,7 @@ plant_info = {
 }
 
 #Fungsi prediksi dengan threshold
-def predict_with_threshold(model, img_array, threshold=0.65):
+def predict_with_threshold(model, img_array, threshold=0.6):
     start_time = time.time()
     prediction = model.predict(img_array)
     end_time = time.time()
