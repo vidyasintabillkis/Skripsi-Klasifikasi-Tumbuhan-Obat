@@ -29,11 +29,16 @@ def load_model_from_github(url, model_name):
         st.error(f"Gagal memuat model {model_name}: {str(e)}")
         return None
 
-EFFICIENTNET_MODEL_URL = "https://github.com/vidyasintabillkis/SKRIPSI/releases/download/v1.0.0/efficientnetv2b0_10.h5"
+EFFICIENTNET_MODEL_URL = "https://github.com/vidyasintabillkis/SKRIPSI/releases/download/v1.0.0/efficient_10.h5"
 XCEPTION_MODEL_URL = "https://github.com/vidyasintabillkis/SKRIPSI/releases/download/v1.0.0/xception_10.h5"
+MOBILENET_MODEL_URL = "https://github.com/sitiayuni/Model-Skripsi/releases/download/V.1.0.0/mobilenetv2_model_.h5" 
+RESNET_MODEL_IRL = "https://github.com/sitiayuni/Model-Skripsi/releases/download/V.1.0.0/resnet50_model_processInput.h5"
 
 model_efficientnet = load_model_from_github(EFFICIENTNET_MODEL_URL, "EfficientNetV2")
 model_xception = load_model_from_github(XCEPTION_MODEL_URL, "Xception")
+model_mobilenet = load_model_from_github(MOBILENET_MODEL_URL, "MobileNetV2")
+model_resnet = load_model_from_github(RESNET_MODEL_IRL, "Resnet50")
+
 
 if model_efficientnet is None or model_xception is None:
     st.error("Aplikasi tidak dapat berjalan tanpa model. Silakan hubungi administrator.")
@@ -180,7 +185,7 @@ plant_info = {
 }
 
 #Fungsi prediksi dengan threshold
-def predict_with_threshold(model, img_array, threshold=0.6):
+def predict_with_threshold(model, img_array, threshold=0.5):
     start_time = time.time()
     prediction = model.predict(img_array)
     end_time = time.time()
@@ -282,7 +287,9 @@ elif selected == "Klasifikasi":
                     img_array = preprocess_image(image)
                     label1, conf1, time1 = predict_with_threshold(model_efficientnet, img_array)
                     label2, conf2, time2 = predict_with_threshold(model_xception, img_array)
-                    tab1, tab2 = st.tabs(["Klasifikasi Model EfficientNetV2B0", "Klasifikasi Model Xception"])
+                    label3, conf3, time3 = predict_with_threshold(model_mobilenet, img_array)
+                    label4, conf4, time4 = predict_with_threshold(model_resnet, img_array)
+                    tab1, tab2, tab3, tab4 = st.tabs(["EfficientNetV2B0", "Xception", "MobileNetV2", "Resnet50"])
 
                     with tab1:
                         if label1 == "Kelas Tidak Dikenal":
@@ -296,6 +303,20 @@ elif selected == "Klasifikasi":
                             st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini (Xception).")
                         else:
                             show_plant_info(label2, conf2)
+                            # st.caption(f"Hasil klasifikasi menggunakan model Xception")
+
+                    with tab3:
+                        if label3 == "Kelas Tidak Dikenal":
+                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini (Xception).")
+                        else:
+                            show_plant_info(label3, conf3)
+                            # st.caption(f"Hasil klasifikasi menggunakan model Xception")
+                    
+                    with tab4:
+                        if label4 == "Kelas Tidak Dikenal":
+                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini (Xception).")
+                        else:
+                            show_plant_info(label4, conf4)
                             # st.caption(f"Hasil klasifikasi menggunakan model Xception")
 
             except UnidentifiedImageError:
