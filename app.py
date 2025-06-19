@@ -1,9 +1,9 @@
-import streamlit as st
-import numpy as np
-import tensorflow as tf
-import time, requests, tempfile
-from PIL import Image, UnidentifiedImageError
-from streamlit_option_menu import option_menu
+import streamlit as st #untuk buat UI web
+import numpy as np #
+import tensorflow as tf #untuk load dan pakai modelnya
+import time, requests, tempfile #untuk download model dari github dan simpan model ke file sementara
+from PIL import Image, UnidentifiedImageError #untuk proses gambar 
+from streamlit_option_menu import option_menu #untuk buat menu
 
 st.set_page_config(
     page_title="Plantifier",
@@ -31,14 +31,9 @@ def load_model_from_github(url, model_name):
 
 EFFICIENTNET_MODEL_URL = "https://github.com/vidyasintabillkis/SKRIPSI/releases/download/v1.0.0/efficient_10.h5"
 XCEPTION_MODEL_URL = "https://github.com/vidyasintabillkis/SKRIPSI/releases/download/v1.0.0/xception_10.h5"
-MOBILENET_MODEL_URL = "https://github.com/sitiayuni/Model-Skripsi/releases/download/V.1.0.0/mobilenetv2_model_.h5" 
-RESNET_MODEL_IRL = "https://github.com/sitiayuni/Model-Skripsi/releases/download/V.1.0.0/resnet50_model_processInput.h5"
 
 model_efficientnet = load_model_from_github(EFFICIENTNET_MODEL_URL, "EfficientNetV2")
 model_xception = load_model_from_github(XCEPTION_MODEL_URL, "Xception")
-model_mobilenet = load_model_from_github(MOBILENET_MODEL_URL, "MobileNetV2")
-model_resnet = load_model_from_github(RESNET_MODEL_IRL, "Resnet50")
-
 
 if model_efficientnet is None or model_xception is None:
     st.error("Aplikasi tidak dapat berjalan tanpa model. Silakan hubungi administrator.")
@@ -186,19 +181,15 @@ plant_info = {
 
 #Fungsi prediksi dengan threshold
 def predict_with_threshold(model, img_array, threshold=0.5):
-    start_time = time.time()
     prediction = model.predict(img_array)
-    end_time = time.time()
-    execution_time = end_time - start_time
-
     predicted_class = np.argmax(prediction, axis=1)
     confidence = np.max(prediction)
     confidence_percent = confidence * 100
 
     if confidence < threshold:
-        return "Kelas Tidak Dikenal", confidence_percent, execution_time
+        return "Kelas Tidak Dikenal", confidence_percent
     else:
-        return labels[predicted_class[0]], confidence_percent, execution_time
+        return labels[predicted_class[0]], confidence_percent
 
 #Preprocessing gambar
 def preprocess_image(image):
@@ -287,37 +278,19 @@ elif selected == "Klasifikasi":
                     img_array = preprocess_image(image)
                     label1, conf1, time1 = predict_with_threshold(model_efficientnet, img_array)
                     label2, conf2, time2 = predict_with_threshold(model_xception, img_array)
-                    label3, conf3, time3 = predict_with_threshold(model_mobilenet, img_array)
-                    label4, conf4, time4 = predict_with_threshold(model_resnet, img_array)
-                    tab1, tab2, tab3, tab4 = st.tabs(["EfficientNetV2B0", "Xception", "MobileNetV2", "Resnet50"])
+                    tab1, tab2, tab3, tab4 = st.tabs(["Hasil Klasifikasi EfficientNetV2B0", "Hasil Klasifikasi Xception"])
 
                     with tab1:
                         if label1 == "Kelas Tidak Dikenal":
-                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini (EfficientNet).")
+                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini.")
                         else:
                             show_plant_info(label1, conf1)
-                            # st.caption(f"Hasil klasifikasi menggunakan model EfficientNet")
 
                     with tab2:
                         if label2 == "Kelas Tidak Dikenal":
-                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini (Xception).")
+                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini.")
                         else:
                             show_plant_info(label2, conf2)
-                            # st.caption(f"Hasil klasifikasi menggunakan model Xception")
-
-                    with tab3:
-                        if label3 == "Kelas Tidak Dikenal":
-                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini (Xception).")
-                        else:
-                            show_plant_info(label3, conf3)
-                            # st.caption(f"Hasil klasifikasi menggunakan model Xception")
-                    
-                    with tab4:
-                        if label4 == "Kelas Tidak Dikenal":
-                            st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini (Xception).")
-                        else:
-                            show_plant_info(label4, conf4)
-                            # st.caption(f"Hasil klasifikasi menggunakan model Xception")
 
             except UnidentifiedImageError:
                 st.error("❌ File yang diunggah bukan gambar yang valid atau gambar corrupt. Silakan unggah ulang.")
