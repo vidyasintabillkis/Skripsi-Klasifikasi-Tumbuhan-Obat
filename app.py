@@ -2,8 +2,8 @@ import streamlit as st #untuk buat UI web
 import numpy as np #
 import tensorflow as tf #untuk load dan pakai modelnya
 import time, requests, tempfile #untuk download model dari github dan simpan model ke file sementara
-from PIL import Image, UnidentifiedImageError #untuk proses gambar 
-from streamlit_option_menu import option_menu #untuk buat menu
+from PIL import Image, UnidentifiedImageError #untuk proses gambar dan buat navbar
+from streamlit_option_menu import option_menu
 
 st.set_page_config(
     page_title="Plantifier",
@@ -278,7 +278,7 @@ elif selected == "Klasifikasi":
                     img_array = preprocess_image(image)
                     label1, conf1, time1 = predict_with_threshold(model_efficientnet, img_array)
                     label2, conf2, time2 = predict_with_threshold(model_xception, img_array)
-                    tab1, tab2, tab3, tab4 = st.tabs(["Hasil Klasifikasi EfficientNetV2B0", "Hasil Klasifikasi Xception"])
+                    tab1, tab2 = st.tabs(["Hasil Klasifikasi EfficientNetV2B0", "Hasil Klasifikasi Xception"])
 
                     with tab1:
                         if label1 == "Kelas Tidak Dikenal":
