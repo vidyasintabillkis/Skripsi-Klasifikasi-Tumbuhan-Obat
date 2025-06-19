@@ -181,15 +181,19 @@ plant_info = {
 
 #Fungsi prediksi dengan threshold
 def predict_with_threshold(model, img_array, threshold=0.5):
+    start_time = time.time()
     prediction = model.predict(img_array)
+    end_time = time.time()
+    execution_time = end_time - start_time
+
     predicted_class = np.argmax(prediction, axis=1)
     confidence = np.max(prediction)
     confidence_percent = confidence * 100
 
     if confidence < threshold:
-        return "Kelas Tidak Dikenal", confidence_percent
+        return "Kelas Tidak Dikenal", confidence_percent, execution_time
     else:
-        return labels[predicted_class[0]], confidence_percent
+        return labels[predicted_class[0]], confidence_percent, execution_time
 
 #Preprocessing gambar
 def preprocess_image(image):
@@ -285,12 +289,14 @@ elif selected == "Klasifikasi":
                             st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini.")
                         else:
                             show_plant_info(label1, conf1)
+                            # st.caption(f"Hasil klasifikasi menggunakan model EfficientNet")
 
                     with tab2:
                         if label2 == "Kelas Tidak Dikenal":
                             st.error("⚠️ Mohon maaf, sistem tidak dapat mengenali tumbuhan ini.")
                         else:
                             show_plant_info(label2, conf2)
+                            # st.caption(f"Hasil klasifikasi menggunakan model Xception")
 
             except UnidentifiedImageError:
                 st.error("❌ File yang diunggah bukan gambar yang valid atau gambar corrupt. Silakan unggah ulang.")
